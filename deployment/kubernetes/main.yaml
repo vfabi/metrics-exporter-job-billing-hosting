@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sandbox-metrics-exporter-job-billing-hosting-1
+  namespace: default
+spec:
+  schedule: '5 */3 * * *'
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: main
+              image: vfabi/metrics-exporter-job-billing-hosting:1.0.1
+              # command: ["python3"]
+              # args: ["./main.py"]
+              env:
+                - name: LOGLEVEL
+                  value: INFO
+                - name: METRICS_STORAGE_URL
+                  value: https://mon.example.com/victoriametrics/api/v1/import/prometheus
+                - name: METRICS_STORAGE_USERNAME
+                  value: admin
+                - name: METRICS_STORAGE_PASSWORD
+                  value: password
+                - name: PROVIDER
+                  value: hostvds.com
+                - name: HOSTVDS_URL
+                  value: https://hostvds.com/login
+                - name: HOSTVDS_ACCOUNT
+                  value: example@gmail.com
+                - name: HOSTVDS_PASSWORD
+                  value: password
+              resources: {}
+          restartPolicy: Never
